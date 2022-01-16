@@ -1,0 +1,17 @@
+{
+	"name": "jdefer",
+	"version": "0.0.2",
+	"main": "index.js",
+	"repository": "https://github.com/tranvansang/jdefer",
+	"files": [
+		"index.js",
+		"index.d.ts"
+	],
+	"keywords": [
+		"promise",
+		"defer",
+		"lazy"
+	],
+	"author": "Tran Sang <me@transa.ng>",
+	"license": "MIT"
+}
