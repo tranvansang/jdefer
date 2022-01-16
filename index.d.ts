@@ -1,6 +1,6 @@
 export interface IDefer<T> {
-	resolve(v: T): any;
-	reject(e: Error): any;
+	resolve(v: T): void;
+	reject(e: Error): void;
 	promise: Promise<T>;
 }
 declare const makeDefer: <T>() => IDefer<T>;
