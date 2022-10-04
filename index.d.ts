@@ -3,5 +3,5 @@ export interface IDefer<T> {
 	reject(e: Error): void;
 	promise: Promise<T>;
 }
-declare const makeDefer: <T>() => IDefer<T>;
+declare const makeDefer: <T = void>() => IDefer<T>;
 export default makeDefer;
