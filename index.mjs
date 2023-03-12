@@ -1,7 +1,4 @@
-'use strict'
-Object.defineProperty(exports, '__esModule', {value: true})
-
-function makeDefer() {
+export default function makeDefer() {
 	let resolve = undefined
 	let reject = undefined
 	const promise = new Promise((rs, rj) => {
@@ -14,5 +11,3 @@ function makeDefer() {
 		promise
 	}
 }
-
-exports.default = makeDefer

@@ -10,6 +10,8 @@ yarn add jdefer
 
 ```typescript
 import makeDefer from 'jdefer'
+// or
+const makeDefer = require('jdefer').default
 
 const defer = makeDefer()
 

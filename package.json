@@ -5,8 +5,15 @@
 	"repository": "https://github.com/tranvansang/jdefer",
 	"files": [
 		"index.js",
-		"index.d.ts"
+		"index.d.ts",
+		"index.mjs"
 	],
+	"exports": {
+		".": {
+			"import": "./index.mjs",
+			"require": "./index.js"
+		}
+	},
 	"keywords": [
 		"promise",
 		"defer",
