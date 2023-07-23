@@ -1,12 +1,13 @@
 {
 	"name": "jdefer",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"main": "index.js",
 	"repository": "https://github.com/tranvansang/jdefer",
 	"files": [
 		"index.js",
 		"index.d.ts",
-		"index.mjs"
+		"index.mjs",
+		"index.d.mts"
 	],
 	"exports": {
 		".": {
