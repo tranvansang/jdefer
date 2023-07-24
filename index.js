@@ -1,7 +1,6 @@
 'use strict'
 
-module.exports = makeDefer
-function makeDefer() {
+module.exports = function makeDefer() {
 	let resolve = undefined
 	let reject = undefined
 	const promise = new Promise((rs, rj) => {
@@ -14,5 +13,3 @@ function makeDefer() {
 		promise
 	}
 }
-
-exports.default = makeDefer
