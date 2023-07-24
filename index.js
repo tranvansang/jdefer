@@ -1,6 +1,6 @@
 'use strict'
-Object.defineProperty(exports, '__esModule', {value: true})
 
+module.exports = makeDefer
 function makeDefer() {
 	let resolve = undefined
 	let reject = undefined

@@ -12,6 +12,8 @@ yarn add jdefer
 import makeDefer from 'jdefer'
 // or
 const makeDefer = require('jdefer').default
+// or
+const makeDefer = require('jdefer')
 
 const defer = makeDefer()
 
