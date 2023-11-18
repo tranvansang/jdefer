@@ -22,9 +22,11 @@ export function makeBroadcastStream() {
 				next() {
 					return defer.promise
 				},
-				return() {
+				async return(value) {
+					return {value: undefined, done: true}
 				},
-				throw() {
+				async throw(e) {
+					return {value: undefined, done: true}
 				}
 			}
 		},
@@ -44,7 +46,10 @@ export function makeBroadcastStream() {
 				throw new Error('Cannot next after done')
 			defer.resolve({value, done: false})
 			for (const {onNext} of listeners)
-				onNext(value)
+				try {
+					onNext(value)
+				} catch {
+				}
 		},
 		throw(error) {
 			if (done)
@@ -52,15 +57,21 @@ export function makeBroadcastStream() {
 			done = true
 			defer.reject(error)
 			for (const {onError} of listeners)
-				onError === null || onError === void 0 ? void 0 : onError(error)
+				try {
+					onError?.(error)
+				} catch {
+				}
 		},
 		done() {
 			if (done)
 				throw new Error('Cannot done after done')
 			done = true
-			defer.resolve({done: true})
+			defer.resolve({value: undefined, done: true})
 			for (const {onDone} of listeners)
-				onDone === null || onDone === void 0 ? void 0 : onDone()
+				try {
+					onDone?.()
+				} catch {
+				}
 		},
 	}
 }

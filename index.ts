@@ -1,9 +1,16 @@
 export interface IDefer<T> {
 	resolve(v: T): void
-
 	reject(e: Error): void
-
 	promise: Promise<T>
+}
+export interface IBroadcastStream<T> extends AsyncIterable<T> {
+	listen(onNext: (value: T) => any, {onError, onDone}?: {
+		onError?(error: unknown): any
+		onDone?(): any
+	}): (this: void) => void
+	next(value: T): void
+	throw(error: unknown): void
+	done(): void
 }
 
 export default function makeDefer<T = void>(): IDefer<T> {
@@ -20,7 +27,7 @@ export default function makeDefer<T = void>(): IDefer<T> {
 	}
 }
 
-export function makeBroadcastStream<T>() {
+export function makeBroadcastStream<T>(): IBroadcastStream<T> {
 	const listeners: {
 		onNext(value: T): any
 		onError?(error: unknown): any
@@ -34,9 +41,11 @@ export function makeBroadcastStream<T>() {
 				next() {
 					return defer.promise
 				},
-				return() {
+				async return(value?: any) {
+					return {value: undefined, done: true}
 				},
-				throw() {
+				async throw(e?: unknown) {
+					return {value: undefined, done: true}
 				}
 			}
 		},
@@ -55,19 +64,25 @@ export function makeBroadcastStream<T>() {
 		next(value: T) {
 			if (done) throw new Error('Cannot next after done')
 			defer.resolve({value, done: false})
-			for (const {onNext} of listeners) onNext(value)
+			for (const {onNext} of listeners) try {
+				onNext(value)
+			} catch {}
 		},
 		throw(error: unknown) {
 			if (done) throw new Error('Cannot throw after done')
 			done = true
 			defer.reject(error)
-			for (const {onError} of listeners) onError?.(error)
+			for (const {onError} of listeners) try {
+				onError?.(error)
+			} catch {}
 		},
 		done() {
 			if (done) throw new Error('Cannot done after done')
 			done = true
-			defer.resolve({done: true})
-			for (const {onDone} of listeners) onDone?.()
+			defer.resolve({value: undefined, done: true})
+			for (const {onDone} of listeners) try {
+				onDone?.()
+			} catch {}
 		},
 	}
 }
