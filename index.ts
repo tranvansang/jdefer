@@ -19,3 +19,55 @@ export default function makeDefer<T = void>(): IDefer<T> {
 		promise
 	}
 }
+
+export function makeBroadcastStream<T>() {
+	const listeners: {
+		onNext(value: T): any
+		onError?(error: unknown): any
+		onDone?(): any
+	}[] = []
+	let done = false
+	let defer = makeDefer<IteratorResult<T>>()
+	return {
+		[Symbol.asyncIterator](): AsyncIterator<T> {
+			return {
+				next() {
+					return defer.promise
+				},
+				return() {
+				},
+				throw() {
+				}
+			}
+		},
+		listen(onNext: (value: T) => any, {onError, onDone}: {
+			onError?(error: unknown): any
+			onDone?(): any
+		} = {}) {
+			if (done) throw new Error('Cannot listen after done')
+			const listener = {onNext, onError, onDone}
+			listeners.push(listener)
+			return function removeListener(this: void) {
+				const idx = listeners.lastIndexOf(listener)
+				if (idx >= 0) listeners.splice(idx, 1)
+			}
+		},
+		next(value: T) {
+			if (done) throw new Error('Cannot next after done')
+			defer.resolve({value, done: false})
+			for (const {onNext} of listeners) onNext(value)
+		},
+		throw(error: unknown) {
+			if (done) throw new Error('Cannot throw after done')
+			done = true
+			defer.reject(error)
+			for (const {onError} of listeners) onError?.(error)
+		},
+		done() {
+			if (done) throw new Error('Cannot done after done')
+			done = true
+			defer.resolve({done: true})
+			for (const {onDone} of listeners) onDone?.()
+		},
+	}
+}
