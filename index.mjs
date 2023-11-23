@@ -18,10 +18,10 @@ export function makeBroadcastStream() {
 	return {
 		[Symbol.asyncIterator]() {
 			return {
-				next() {
-					const { promise } = defer;
+				async next() {
+					const value = await defer.promise;
 					defer = makeDefer();
-					return promise;
+					return value;
 				},
 				async return(value) {
 					return { value: undefined, done: true };

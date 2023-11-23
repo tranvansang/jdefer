@@ -38,10 +38,10 @@ export function makeBroadcastStream<T>(): IBroadcastStream<T> {
 	return {
 		[Symbol.asyncIterator](): AsyncIterator<T> {
 			return {
-				next() {
-					const {promise} = defer
+				async next() {
+					const value = await defer.promise
 					defer = makeDefer()
-					return promise
+					return value
 				},
 				async return(value?: any) {
 					return {value: undefined, done: true}
