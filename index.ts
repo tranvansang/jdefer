@@ -39,7 +39,9 @@ export function makeBroadcastStream<T>(): IBroadcastStream<T> {
 		[Symbol.asyncIterator](): AsyncIterator<T> {
 			return {
 				next() {
-					return defer.promise
+					const {promise} = defer
+					defer = makeDefer()
+					return promise
 				},
 				async return(value?: any) {
 					return {value: undefined, done: true}
