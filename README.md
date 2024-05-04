@@ -10,6 +10,8 @@ yarn add jdefer
 
 ## Single promise with defer
 
+In 2024: recommended using [`Promise.withResolvers()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/withResolvers).
+
 ```typescript
 import makeDefer from 'jdefer'
 // or
