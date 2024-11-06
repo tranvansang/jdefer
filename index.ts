@@ -39,6 +39,7 @@ export function makeBroadcastStream<T>(): IBroadcastStream<T> {
 		[Symbol.asyncIterator](): AsyncIterator<T> {
 			return {
 				async next() {
+					if (done) return {value: undefined, done: true}
 					const value = await defer.promise
 					defer = makeDefer()
 					return value
@@ -55,7 +56,10 @@ export function makeBroadcastStream<T>(): IBroadcastStream<T> {
 			onError?(error: unknown): any
 			onDone?(): any
 		} = {}) {
-			if (done) throw new Error('Cannot listen after done')
+			if (done) {
+				onDone?.()
+				return () => {}
+			}
 			const listener = {onNext, onError, onDone}
 			listeners.push(listener)
 			return function removeListener(this: void) {
@@ -64,14 +68,14 @@ export function makeBroadcastStream<T>(): IBroadcastStream<T> {
 			}
 		},
 		next(value: T) {
-			if (done) throw new Error('Cannot next after done')
+			if (done) return
 			defer.resolve({value, done: false})
 			for (const {onNext} of listeners) try {
 				onNext(value)
 			} catch {}
 		},
 		throw(error: unknown) {
-			if (done) throw new Error('Cannot throw after done')
+			if (done) return
 			done = true
 			defer.reject(error)
 			for (const {onError} of listeners) try {
@@ -79,7 +83,7 @@ export function makeBroadcastStream<T>(): IBroadcastStream<T> {
 			} catch {}
 		},
 		done() {
-			if (done) throw new Error('Cannot done after done')
+			if (done) return
 			done = true
 			defer.resolve({value: undefined, done: true})
 			for (const {onDone} of listeners) try {
