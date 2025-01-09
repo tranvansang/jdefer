@@ -36,7 +36,7 @@ export function makeBroadcastStream() {
 		},
 		listen(onNext, {onError, onDone} = {}) {
 			if (done) {
-				onDone?.()
+				onDone === null || onDone === void 0 ? void 0 : onDone()
 				return () => {
 				}
 			}
@@ -53,10 +53,7 @@ export function makeBroadcastStream() {
 				return
 			defer.resolve({value, done: false})
 			for (const {onNext} of listeners)
-				try {
-					onNext(value)
-				} catch {
-				}
+				onNext(value)
 		},
 		throw(error) {
 			if (done)
@@ -64,10 +61,7 @@ export function makeBroadcastStream() {
 			done = true
 			defer.reject(error)
 			for (const {onError} of listeners)
-				try {
-					onError?.(error)
-				} catch {
-				}
+				onError === null || onError === void 0 ? void 0 : onError(error)
 		},
 		done() {
 			if (done)
@@ -75,10 +69,7 @@ export function makeBroadcastStream() {
 			done = true
 			defer.resolve({value: undefined, done: true})
 			for (const {onDone} of listeners)
-				try {
-					onDone?.()
-				} catch {
-				}
+				onDone === null || onDone === void 0 ? void 0 : onDone()
 		},
 	}
 }

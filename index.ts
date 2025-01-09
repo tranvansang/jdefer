@@ -70,25 +70,19 @@ export function makeBroadcastStream<T>(): IBroadcastStream<T> {
 		next(value: T) {
 			if (done) return
 			defer.resolve({value, done: false})
-			for (const {onNext} of listeners) try {
-				onNext(value)
-			} catch {}
+			for (const {onNext} of listeners) onNext(value)
 		},
 		throw(error: unknown) {
 			if (done) return
 			done = true
 			defer.reject(error as Error)
-			for (const {onError} of listeners) try {
-				onError?.(error)
-			} catch {}
+			for (const {onError} of listeners) onError?.(error)
 		},
 		done() {
 			if (done) return
 			done = true
 			defer.resolve({value: undefined, done: true})
-			for (const {onDone} of listeners) try {
-				onDone?.()
-			} catch {}
+			for (const {onDone} of listeners) onDone?.()
 		},
 	}
 }
